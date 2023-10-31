@@ -12,7 +12,7 @@ from PortfolioProject..CovidDeaths
 where continent is not NULL
 order by 1,2
 
---looking at total cases vs total deaths
+--Total cases vs total deaths
 --likelihodd of dying if you contract covid in US
 select location, date, total_cases, total_deaths, 
 (CONVERT(float, total_deaths) / NULLIF(CONVERT(float, total_cases), 0)) * 100 AS Deathpercentage
@@ -30,7 +30,7 @@ where location like '%states%'
 and continent is not NULL
 order by 1,2
 
---looking at countries with Highest Infection Rate compared to Population
+--Countries with Highest Infection Rate compared to Population
 select location, population, MAX(total_cases) as HighestInfectionCount, 
 MAX((CONVERT(float, total_cases) / NULLIF(CONVERT(float, population), 0))) * 100 AS  PercentPopulationInfected
 from PortfolioProject..CovidDeaths	
@@ -40,7 +40,7 @@ group by location,population
 order by PercentPopulationInfected desc
 
 
---Showing countries with Highest Death count per population
+--Countries with Highest Death count per population
 
 select location, MAX(cast(total_deaths as int)) as TotalDeathCount 
 from PortfolioProject..CovidDeaths
@@ -50,8 +50,8 @@ group by location
 order by TotalDeathCount desc
 
 
---LETS BREAK DOWN BY CONTINENT instead of location
---showing continents wiyth highest death count per location
+--BREAK DOWN BY CONTINENT instead of location
+--showing continents with highest death count per location
 select continent, MAX(cast(total_deaths as int)) as TotalDeathCount 
 from PortfolioProject..CovidDeaths
 --where location like '%states%'
