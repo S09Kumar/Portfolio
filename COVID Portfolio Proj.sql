@@ -92,9 +92,7 @@ order by 1,2
 
 select dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations
 ,SUM(convert(float,vac.new_vaccinations)) Over (partition by dea.location order by dea.location,
-dea.date) as RollingPeopleVaccinated--sums total cases for that particular location/country, 
---and orders(increases count) by each date,location for that country.
---,(RollingPeopleVaccinated/population)*100 -- cannot call immedeatly once its created, so use temp table.
+dea.date) as RollingPeopleVaccinated--sums total cases for that particular location/country,and orders(increases count) by each date,location for that country.
 from PortfolioProject..CovidDeaths dea
 join PortfolioProject..CovidVaccinations vac
 	on dea.location=vac.location
@@ -110,8 +108,7 @@ as
 (
 select dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations
 ,SUM(convert(float,vac.new_vaccinations)) Over (partition by dea.location order by dea.location,
-dea.date) as RollingPeopleVaccinated--sums total cases for that particular location/country, 
---and orders(increases count) by each date,location for that country.
+dea.date) as RollingPeopleVaccinated
 from PortfolioProject..CovidDeaths dea
 join PortfolioProject..CovidVaccinations vac
 	on dea.location=vac.location
@@ -139,15 +136,14 @@ RollingPeopleVaccinated numeric
 Insert into #PercentPopulationVaccinated
 select dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations
 ,SUM(convert(float,vac.new_vaccinations)) Over (partition by dea.location order by dea.location,
-dea.date) as RollingPeopleVaccinated--sums total cases for that particular location/country, 
---and orders(increases count) by each date,location for that country.
+dea.date) as RollingPeopleVaccinated
 from PortfolioProject..CovidDeaths dea
 join PortfolioProject..CovidVaccinations vac
 	on dea.location=vac.location
 	and dea.date=vac.date
 where dea.continent is not NULL
 
-select *, (RollingPeopleVaccinated/population)*100 as Vacc_Percent
+select *, (RollingPeopleVaccinated/population)*100 as Vacc_Percent ----(RollingPeopleVaccinated/population)*100 -- cannot be called immedeatly once its created, it is accessed via temp table.
 from #PercentPopulationVaccinated
 
 
@@ -156,9 +152,7 @@ from #PercentPopulationVaccinated
 create view PercentPopulationVaccinated as
 select dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations
 ,SUM(convert(float,vac.new_vaccinations)) Over (partition by dea.location order by dea.location,
-dea.date) as RollingPeopleVaccinated--sums total cases for that particular location/country, 
---and orders(increases count) by each date,location for that country.
---,(RollingPeopleVaccinated/population)*100 -- cannot call immedeatly once its created, so use temp table.
+dea.date) as RollingPeopleVaccinated
 from PortfolioProject..CovidDeaths dea
 join PortfolioProject..CovidVaccinations vac
 	on dea.location=vac.location
