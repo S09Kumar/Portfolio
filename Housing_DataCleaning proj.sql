@@ -1,10 +1,15 @@
-/*Data Cleaning Project*/
+/*
+
+Data Cleaning Project in SQL Queries
+
+*/
 
 select * 
 from PortfolioProject..NashvilleHousing
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
---Standardize Date Format
+ --Standardize Date Format
 
 select SaleDate, CONVERT(Date,SaleDate)
 from PortfolioProject..NashvilleHousing
@@ -23,11 +28,10 @@ set SaleDateConverted=CONVERT(date,SaleDate)
 select SaleDateConverted, CONVERT(Date,SaleDate)
 from PortfolioProject..NashvilleHousing
 
-
---Populate Property address data  (parcelIID is same as the property adress- so refrence that)
-                                 --also unique id is not same for 2 properties
-
-
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+ --Populate Property Address data   (parcelIID is same as the property adress- so refrence that, also unique id is not same for 2 properties)
+                             
 select *
 from PortfolioProject..NashvilleHousing
 --where PropertyAddress is null
@@ -48,8 +52,10 @@ join PortfolioProject..NashvilleHousing b
 		and a.[UniqueID ]<>b.[UniqueID ]
 where a.PropertyAddress is null 
 
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
----------Breaking out Address into individual columns (Address, City, State)
+ --Breaking out Address into individual columns (Address, City, State)
 
 select PropertyAddress
 from PortfolioProject..NashvilleHousing
@@ -57,16 +63,11 @@ from PortfolioProject..NashvilleHousing
 order by PropertyAddress
 
 select
-SUBSTRING(PropertyAddress,1, charindex(',',PropertyAddress)-1) as Address--looking for char ',' in PropertyAddress
-																		 -- -1 used to print it without last value ','.
-/* ^ top -looking at property address, starting at very first value */
-
- , SUBSTRING(PropertyAddress,charindex(',',PropertyAddress)+1, len(PropertyAddress)) as city-- +1 starting after ',' and printing till end of len(address) 
-
+SUBSTRING(PropertyAddress,1, charindex(',',PropertyAddress)-1) as Address                    --looking for char ',' in PropertyAddress, -1 used to print it without last value ','. (1 -looking at property address, starting at very first value) 
+, SUBSTRING(PropertyAddress,charindex(',',PropertyAddress)+1, len(PropertyAddress)) as city  -- +1 starting after ',' and printing till end of len(address) 
 from PortfolioProject..NashvilleHousing
 
 /* Actual Code*/
-
 
 Alter Table NashvilleHousing
 add PropertySplitAddress Nvarchar(255); 
@@ -74,7 +75,7 @@ add PropertySplitAddress Nvarchar(255);
 update NashvilleHousing
 set PropertySplitAddress=SUBSTRING(PropertyAddress,1, charindex(',',PropertyAddress)-1)
 
-
+	
 Alter Table NashvilleHousing
 add PropertySplitCity Nvarchar(255); 
 
@@ -124,7 +125,11 @@ Select *
 from PortfolioProject..NashvilleHousing
 
 
-----------Change Y and N as Yes and No in 'Sold as Vacant' field
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	
+ --Change Y and N as Yes and No in 'Sold as Vacant' field
 
 Select distinct(SoldAsVacant), count(SoldAsVacant)
 from PortfolioProject..NashvilleHousing
@@ -147,6 +152,7 @@ set SoldAsVacant= Case when SoldAsVacant='Y' then 'Yes'
 	  Else SoldAsVacant
 	  end
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -----------Remove Duplicates----------
 
@@ -171,7 +177,8 @@ where row_num>1
 --order by PropertyAddress  --cannot use order by in DELETE statement
 
 
-   
+--------------------------------------------------------------------------------------------------------------------------------------------------------------  
+
 ------------Delete Unused Columns-----------[BE careful before deleting any original data]
 
 Select *
